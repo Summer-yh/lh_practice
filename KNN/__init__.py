@@ -5,6 +5,7 @@
 '''
 import pickle
 import numpy as np
+from keras.utils import np_utils
 from sklearn.neighbors import KNeighborsClassifier
 
 #max number of word
@@ -17,8 +18,8 @@ def Cross_validation(index, n_nbor, x_train, y_train, x_val, y_val, p_0, weight,
     cross validation
     return validation's accuracy and test prediction's ratio redult
     '''
-    print('model is running...\n')
-    model = KNeighborsClassifier(n_neighbors = n_nbor, weights = weight, leaf_size = leaf_size, p = p_0)
+    print('model is running...')
+    model = KNeighborsClassifier(n_neighbors = n_nbor, weights = weight, leaf_size = leaf_size, p = p)
     model.fit(x_train, y_train)
     accuracy = model.score(x_val, y_val)
     # prediction for test data
@@ -41,8 +42,8 @@ def get_test_acc(y_predict, y_test):
     return test_acc
 
 if __name__ == '__main__':
-    output = open("KNN.csv", "a")
-    output.write("acc,index,hidden_layer_size,,max_iter,alpha,solver\n")
+    #ft = open("foo.csv", "a")
+    #ft.write("index,n_nerghbors,weight,p,leaf_size,cross_acc,test_acc\n" )
     #set parameters
     n_neighbors = [5, 10, 15, 20, 25]
     p = [1, 2]
@@ -63,7 +64,7 @@ if __name__ == '__main__':
                     #predict is list cox predict_proba() return list of prediction
                     predict = [0] * 31
                     cross_acc = 0
-                    for i in range(1, 5):
+                    for i in range(0, 5):
                         index = str(t) + '.' + str(i)
                         print('running ' + index + ' ....')
                         #import train datas and validation datas
@@ -71,18 +72,19 @@ if __name__ == '__main__':
                         y_train = np.load('data/' + str(i) + 'train_y_fold.npy')
                         x_val = np.load('data/' + str(i) + 'val_x_fold.npy')
                         y_val = np.load('data/' + str(i) + 'val_y_fold.npy')
-                        print(len(x_train))
-                        print(len(y_train))
                         pre_acc_tmp, cross_acc_tmp = Cross_validation(index, neighbor, x_train, \
                                                                       y_train, x_val, y_val, p_0, \
                                                                       weight, leaf_size, x_test)
-                        print('cross_acc is ' + str(cross_acc_tmp))
+                        print(str(index) + '---cross_acc is ' + str(cross_acc_tmp))
                         predict += pre_acc_tmp
                         cross_acc += cross_acc_tmp
-                    cross_acc = cross_acc / 5
+                    cross_acc = cross_acc / 5    
                     test_acc = get_test_acc(predict, y_test)
-                    output.write(str(t) + ',' + str(neighbor) + ',' + str(weight) + ',' + str(p) \
-                                 + ',' + str(leaf_size) + ',' + str(cross_acc) + ',' + str(test_acc))
+                    f = open("KNN.csv", "a")
+                    f.write(str(t) + ',' + str(neighbor) + str(weight) + ',' + str(p_0) \
+                            + ',' + str(leaf_size) + ',' + str(cross_acc) + ',' + str(test_acc) +'\n')
+                    #output.write(str(t) + ',' + str(neighbor) + ',' + str(weight) + ',' + str(p) \
+                                 #+ ',' + str(leaf_size) + ',' + str(cross_acc) + ',' + str(test_acc) + '\n')
                             
 
 
