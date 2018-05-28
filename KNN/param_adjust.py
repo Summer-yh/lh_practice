@@ -43,8 +43,6 @@ if __name__ == '__main__':
         y_test = pickle.load(f)
     t = 0
     knn = KNeighborsClassifier()
-    f = open("log.txt", "a")
-    f.write('fksdhjgfshd')
     knn_search = GridSearchCV(knn, param_list)
     predict = 0
     cross = 0
@@ -54,6 +52,7 @@ if __name__ == '__main__':
         y_train = np.load('data/' + str(i) + 'train_y_fold.npy')
         x_val = np.load('data/' + str(i) + 'val_x_fold.npy')
         y_val = np.load('data/' + str(i) + 'val_y_fold.npy')
+        print(2312321432423)
         knn_search.fit(x_train, y_train)
         print('fit is done\n')
         val_score = knn_search.score(x_val, y_val)

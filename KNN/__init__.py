@@ -1,11 +1,12 @@
 #coding:utf-8
+from __future__ import print_function
+from __future__ import division  
 '''
 [hyhong]
 2018-5-13
 '''
 import pickle
 import numpy as np
-from keras.utils import np_utils
 from sklearn.neighbors import KNeighborsClassifier
 
 #max number of word
@@ -13,7 +14,7 @@ maxlen = 20
 #each word's dimension
 word_dim = 50
 
-def Cross_validation(index, n_nbor, x_train, y_train, x_val, y_val, p_0, weight, leaf_size, x_test):
+def Cross_validation(index, n_nbor, x_train, y_train, x_dev, y_dev, p, weight, leaf_size, x_test):
     '''
     cross validation
     return validation's accuracy and test prediction's ratio redult
@@ -29,12 +30,10 @@ def Cross_validation(index, n_nbor, x_train, y_train, x_val, y_val, p_0, weight,
 def get_test_acc(y_predict, y_test):
     '''
     get correspondence between y's prediction and y's true value
+    argsort() means ascending order,[-1] means get the last one which is the maximum
     '''
     count = 0
     for i in range(len(y_predict)):
-        '''
-        argsort() means ascending order，[-1] means get the last one which is the maximum
-        '''
         predict_label = np.array(y_predict[i]).argsort()[-1]
         if predict_label == y_test[i]:
             count += 1
@@ -42,12 +41,13 @@ def get_test_acc(y_predict, y_test):
     return test_acc
 
 if __name__ == '__main__':
-    #ft = open("foo.csv", "a")
-    #ft.write("index,n_nerghbors,weight,p,leaf_size,cross_acc,test_acc\n" )
+    f = open("KNN.csv", "a")
+    f.write("index,n_nerghbors,weight,p,leaf_size,cross_acc,test_acc\n" )
+    f.close()
     #set parameters
-    n_neighbors = [5, 10, 15, 20, 25]
+    n_neighbors = range(3, 30, 2)
     p = [1, 2]
-    leaf_sizes = [20, 25, 30, 35, 40, 50]
+    leaf_sizes = range(10, 50, 2)
     weights = ['uniform', 'distance']
     t = 0
     #import test data
@@ -81,10 +81,13 @@ if __name__ == '__main__':
                     cross_acc = cross_acc / 5    
                     test_acc = get_test_acc(predict, y_test)
                     f = open("KNN.csv", "a")
-                    f.write(str(t) + ',' + str(neighbor) + str(weight) + ',' + str(p_0) \
+                    f.write(str(t) + ',' + str(neighbor) + ',' + str(weight) + ',' + str(p_0) \
                             + ',' + str(leaf_size) + ',' + str(cross_acc) + ',' + str(test_acc) +'\n')
                     #output.write(str(t) + ',' + str(neighbor) + ',' + str(weight) + ',' + str(p) \
                                  #+ ',' + str(leaf_size) + ',' + str(cross_acc) + ',' + str(test_acc) + '\n')
                             
+
+
+
 
 
