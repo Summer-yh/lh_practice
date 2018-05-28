@@ -39,7 +39,7 @@ def distance_count(test_x, train_x, train_y, k):
 
 def summerize(sort_class):
     for item in sort_class:
-        test_class[item.[0]] = test_class.get(item[0], 0) + sort_class[0][0]
+        test_class[item[0]] = test_class.get(item[0], 0) + sort_class[0][0]
     return 
 
 if __name__ == '__main__':
