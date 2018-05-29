@@ -28,9 +28,6 @@ def distance_count(test_x, train_x, train_y, k):
             sq_diff_list[i] = sq_diff_sum
         #sq_diff_sum = ((test_x_0 - train_x) ** 2).sum(axis = 1)
         distances = sq_diff_list ** 2
-        output = open('Euclidean_distance_with_Gauss' + '.csv', 'a')
-        for item in distances:
-            output.write(str(item) + '\n')
         #if argsort's object is matrix, pay attention to axis; if it is list then ignores it.
         sort_dist = distances.argsort(axis=0)
         _tmp = np.zeros((1, 31))
@@ -50,7 +47,7 @@ def accuracy(predict_y, real_y, f_str):
     count = 0
     total = len(predict_y)
     f = open(f_str, "a")
-    for i in len(predict_y):
+    for i in range(0, len(predict_y)):
         f.write(str(predict_y[i]) + ',' +str(real_y[i]) + '\n')
         if predict_y[i] == real_y[i]:
             count = count + 1
@@ -60,15 +57,16 @@ def accuracy(predict_y, real_y, f_str):
 
 if __name__ == '__main__':
     #import test data
-    #neighbors = range(5, 30, 2)
-    neighbors = [2]
+    neighbors = range(10, 30, 5)
     with open('../data/smp_test_x_bow.pkl', 'rb') as f:
         test_x = pickle.load(f)
     with open('../data/smp_test_y.pkl', 'rb') as f:
         test_y = pickle.load(f)
     test_matrix = np.zeros((len(test_y), 31))
     for k in neighbors:
-        for i in range(0, 2):
+        acc_sum_1 = 0
+        acc_sum_2 = 0
+        for i in range(0, 5):
             print('running ' + str(k) + '_' + str(i) + ' train....')
             f_str = 'KNN_pre_' + str(k) + '_' + str(i) + '.csv'
             train_x = np.load('../data/' + str(i) + 'train_x_fold.npy')
@@ -81,8 +79,11 @@ if __name__ == '__main__':
             test_matrix_tmp = distance_count(test_x, train_x, train_y, k)
             test_matrix = test_matrix + test_matrix_tmp
             test_class = np.argmax(test_matrix, axis=1)
-            print('这是valid的prediction\n' + str(valid_class))
-            valid_acc = accuracy(valid_class, val_y, f_str)
-            test_acc = accuracy(test_class, test_y, f_str)
-            fo = open("KNN.csv", "a")
-            fo.write(str(k) + ',' + str(i) + str(valid_acc) + ',' + str(test_acc) + '\n')
+            print('这是test的prediction\n' + str(valid_class))
+            acc_sum_1 = acc_sum_1 + accuracy(valid_class, val_y, f_str)
+            acc_sum_2 = acc_sum_2 + accuracy(test_class, test_y, f_str)
+        valid_acc = float(acc_sum_1 / 5)
+        test_acc = float(acc_sum_2 / 5)
+        fo = open("KNN.csv", "a")
+        fo.write(str(k) + ',' + str(i) + ',' + str(valid_acc) + ',' + str(test_acc) + '\n')
+
